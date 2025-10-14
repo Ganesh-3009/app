@@ -439,7 +439,8 @@ async def add_medicine(medicine_data: MedicineCreate, user_id: str = Depends(get
     await db.medicines.insert_one(medicine_dict)
     
     # Check for expiry alert
-    expiry_date = datetime.fromisoformat(medicine.expiry_date)
+    from datetime import date
+    expiry_date = datetime.strptime(medicine.expiry_date, '%Y-%m-%d').replace(tzinfo=timezone.utc)
     days_until_expiry = (expiry_date - datetime.now(timezone.utc)).days
     
     if days_until_expiry <= 30:
